@@ -1,0 +1,12 @@
+@pytest.mark.parametrize('datasets',
+                         [Objects365V1Dataset, Objects365V2Dataset])
+def test_annotation_ids_unique(datasets):
+    tmp_dir = tempfile.TemporaryDirectory()
+    fake_json_file = osp.join(tmp_dir.name, 'fake_data.json')
+    _create_ids_error_coco_json(fake_json_file)
+
+    # test annotation ids not unique error
+    with pytest.raises(AssertionError):
+        datasets(ann_file=fake_json_file, classes=('car', ), pipeline=[])
+
+    tmp_dir.cleanup()
